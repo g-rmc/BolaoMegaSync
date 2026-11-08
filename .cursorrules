@@ -3,7 +3,8 @@
 You are working on **BolãoMegaSync**, a portfolio-grade Next.js App Router single-page application for checking Mega-Sena / Mega da Virada lottery pools (bolões).
 
 ## 1. Architectural Constraints (Static Export / GitHub Pages)
-- **100% Frontend Static Export**: `next.config.js` MUST retain `output: 'export'`, `trailingSlash: true`, and `images: { unoptimized: true }`.
+- **100% Frontend Static Export**: `next.config.js` MUST retain `output: 'export'`, `trailingSlash: true`, and `images: { unoptimized: true }`. Keep `public/.nojekyll` present so GitHub Pages never strips the `_next/` directory.
+- **GitHub Actions Deployment (`.github/workflows/deploy.yml`)**: GitHub Pages must be configured with **Source: GitHub Actions** (not *Deploy from a branch*). In `deploy.yml`, do not hardcode `cache: 'npm'` in `actions/setup-node` or bare `npm ci` without a fallback (`if [ -f package-lock.json ]; then npm ci; else npm install; fi`) so builds succeed even when `package-lock.json` is not committed.
 - **No Server-Side Runtime**: Do NOT add Next.js Route Handlers (`app/api/**`), Server Actions, `cookies()`, `headers()`, dynamic SSR (`force-dynamic`), or middleware. Everything must compile cleanly into the static `out/` directory.
 - **Build Determinism**: Avoid build-time external network dependencies (such as `next/font/google`) unless explicitly requested, keeping CSS typography self-contained.
 

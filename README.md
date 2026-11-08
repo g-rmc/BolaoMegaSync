@@ -4,6 +4,8 @@ Aplicação web estática (SPA) construída em **Next.js (App Router)**, **TypeS
 
 Projetado com identidade visual **Réveillon (Preto, Prata e Dourado)**, o projeto realiza todo o processamento localmente no navegador e está configurado para exportação estática (**GitHub Pages**) via `output: 'export'`.
 
+🔗 **Demo Online (GitHub Pages):** [https://g-rmc.github.io/BolaoMegaSync/](https://g-rmc.github.io/BolaoMegaSync/)
+
 ---
 
 ## Principais Funcionalidades
@@ -107,11 +109,11 @@ npx serve out
 
 ### Deploy Automático via GitHub Actions
 
-O repositório já inclui o workflow [`.github/workflows/deploy.yml`](.github/workflows/deploy.yml). Para ativar:
+O repositório já inclui o workflow [`.github/workflows/deploy.yml`](.github/workflows/deploy.yml) e o arquivo `public/.nojekyll` (para garantir que a pasta `_next/` não seja ignorada pelo GitHub Pages). Para ativar:
 
 1. No repositório do GitHub, acesse **Settings → Pages**.
-2. Em **Build and deployment → Source**, selecione **GitHub Actions**.
-3. Faça push para a branch `main`. O workflow executará `npm ci`, `npm run build` (com `NEXT_PUBLIC_BASE_PATH` ajustado automaticamente caso não seja um domínio customizado/root) e publicará a pasta `out/` no GitHub Pages.
+2. Em **Build and deployment → Source**, selecione **GitHub Actions** (não utilize *Deploy from a branch*, caso contrário o GitHub Pages renderizará o `README.md` em vez da aplicação).
+3. Faça push para a branch `main`. O workflow instalará as dependências (`npm ci` se houver `package-lock.json`, ou `npm install` automaticamente como fallback), executará `npm run build` (com `NEXT_PUBLIC_BASE_PATH` ajustado automaticamente) e publicará a pasta `out/` no GitHub Pages.
 
 ---
 
