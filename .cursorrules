@@ -1,0 +1,42 @@
+# BolãoMegaSync — AI Agent & Architecture Context
+
+You are working on **BolãoMegaSync**, a portfolio-grade Next.js App Router single-page application for checking Mega-Sena / Mega da Virada lottery pools (bolões).
+
+## 1. Architectural Constraints (Static Export / GitHub Pages)
+- **100% Frontend Static Export**: `next.config.js` MUST retain `output: 'export'`, `trailingSlash: true`, and `images: { unoptimized: true }`.
+- **No Server-Side Runtime**: Do NOT add Next.js Route Handlers (`app/api/**`), Server Actions, `cookies()`, `headers()`, dynamic SSR (`force-dynamic`), or middleware. Everything must compile cleanly into the static `out/` directory.
+- **Build Determinism**: Avoid build-time external network dependencies (such as `next/font/google`) unless explicitly requested, keeping CSS typography self-contained.
+
+## 2. Language Policy (Strict Separation)
+- **Codebase Language — English ONLY**: All file names, directories, TypeScript types/interfaces, component names, variable/function names, test descriptions, and code comments MUST be written in **English**.
+- **UI Language — Portuguese (`pt-BR`) ONLY**: Every user-visible string (headings, button labels, form placeholders, validation warnings, error banners, toasts, aria-labels, HTML `<title>`, and metadata descriptions) MUST be written in **Brazilian Portuguese (`pt-BR`)**.
+
+## 3. Visual Identity & Tailwind Color Palette ("Réveillon" Theme)
+- Maintain the festive yet professional **Black / Silver / Gold** New Year's Eve theme defined in `tailwind.config.ts` under `theme.extend.colors.reveillon`:
+  - **Black / Dark Bases**: `reveillon-black` (`#050507`), `reveillon-obsidian` (`#0B0C10`), `reveillon-charcoal` (`#13151C`), `reveillon-surface` (`#1A1D26`), `reveillon-border` (`#272B36`).
+  - **Silver / Secondary & Non-Matching Numbers**: `reveillon-silver-light` (`#E2E8F0`), `reveillon-silver` (`#A1A9B8`), `reveillon-silver-muted` (`#64748B`), `reveillon-silver-dark` (`#334155`).
+  - **Gold / Primary Highlights & Drawn Matches**: `reveillon-gold-light` (`#FCE38A`), `reveillon-gold` (`#D4AF37`), `reveillon-gold-bright` (`#F5C542`), `reveillon-gold-dark` (`#9A7B1C`), plus `bg-gold-shimmer` and `text-gold-gradient`.
+
+## 4. API & CORS Proxy Strategy
+- Official Caixa endpoint: `https://servicebus2.caixa.gov.br/portaldeloterias/api/megasena/{contestNumber}`.
+- Because the app is a static GitHub Pages export, browser calls MUST be routed through a public CORS proxy in `src/utils/lotteryApi.ts` (primary: `https://corsproxy.io/?url=...`, secondary fallback: `https://api.allorigins.win/raw?url=...`) with an `AbortController` timeout.
+- **Mandatory Manual Fallback**: Always preserve the "Inserção Manual" mode in `src/components/ApiFetcher.tsx` with 6 dedicated inputs (`01`–`60`, unique) so users can check bets even if Caixa's endpoint or CORS proxies fail.
+
+## 5. CSV & Conference Engine Rules
+- **CSV Format** (`src/utils/csvParser.ts`):
+  - No header row. One bet per row, numbers separated by `,`, `;`, or `\t`.
+  - Completely empty or delimiter-only rows are filtered out silently.
+  - Valid bets have between **6 and 20** unique integers from **1 to 60**, stored sorted ascending.
+  - Rows with `< 6` numbers, `> 20` numbers, duplicates, or non-integer/out-of-range values produce structured `CsvParseWarning` entries shown in the UI.
+- **Conference Engine** (`src/utils/conferenceEngine.ts`):
+  - Keep `evaluateGames` and `summarizeConference` pure and wrapped in `useMemo` inside `src/components/MegaSyncApp.tsx`.
+  - Prize classification is strictly by exact hit count: `4` = Quadra, `5` = Quina, `6` = Sena.
+  - Game cards (`src/components/GameCard.tsx`) MUST render numbers in ascending order, highlighting drawn matches in **Gold** and non-matches in **Silver/neutral**.
+
+## 6. Verification Commands
+Before finishing any modification, verify with:
+- `npm run typecheck` (`tsc --noEmit`)
+- `npm run lint`
+- `npm test`
+- `npm run build` (must produce `out/` cleanly)
+
